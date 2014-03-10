@@ -12,6 +12,7 @@
 #define DEFAULT_COLUMN_WIDTH 100.0
 #define DEFAULT_TOP_SCROLL_VIEW_HEIGHT 50.0
 #define DEFAULT_LEFT_SCROLL_VIEW_WIDTH 120.0
+#define DEFAULT_THICKNESS_LINE 0.5
 
 @interface DGGridView () <UIScrollViewDelegate>
 
@@ -22,6 +23,7 @@
 @property (nonatomic) CGFloat leftWidth;
 @property (nonatomic) CGFloat rowHeight;
 @property (nonatomic) CGFloat columnWidth;
+@property (nonatomic) CGFloat thickness;
 
 @property (nonatomic, strong) UIScrollView *topScrollView;
 @property (nonatomic, strong) UIScrollView *leftScrollView;
@@ -79,6 +81,12 @@
         _leftWidth = [self.delegate widthForLeftScrollViewInGridView:self];
     } else {
         _leftWidth = DEFAULT_LEFT_SCROLL_VIEW_WIDTH;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(gridViewThicknessOfLine:)]) {
+        _thickness = [self.delegate gridViewThicknessOfLine:self];
+    } else {
+        _thickness = DEFAULT_THICKNESS_LINE;
     }
     
     [self initTopScrollView];
@@ -204,7 +212,7 @@
 - (void)drawLineForMainGridView {
     NSInteger x = 0, y = 0;
     for (int i = 0; i < _columnCount; i++) {
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(x, 0, 0.5, _mainGridView.contentSize.height)];
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(x, 0, _thickness, _mainGridView.contentSize.height)];
         [line setBackgroundColor:[UIColor darkGrayColor]];
         [_mainGridView addSubview:line];
         
@@ -218,7 +226,7 @@
         x += width;
     }
     for (int i = 0; i < _rowCount; i++) {
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, y, _mainGridView.contentSize.width, 0.5)];
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, y, _mainGridView.contentSize.width, _thickness)];
         [line setBackgroundColor:[UIColor darkGrayColor]];
         [_mainGridView addSubview:line];
         
