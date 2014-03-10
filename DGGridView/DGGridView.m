@@ -12,6 +12,7 @@
 #define DEFAULT_COLUMN_WIDTH 100.0
 #define DEFAULT_TOP_SCROLL_VIEW_HEIGHT 50.0
 #define DEFAULT_LEFT_SCROLL_VIEW_WIDTH 120.0
+#define DEFAULT_THICKNESS_LINE 0.5
 
 @interface DGGridView () <UIScrollViewDelegate>
 
@@ -22,6 +23,7 @@
 @property (nonatomic) CGFloat leftWidth;
 @property (nonatomic) CGFloat rowHeight;
 @property (nonatomic) CGFloat columnWidth;
+@property (nonatomic) CGFloat thickness;
 
 @property (nonatomic, strong) UIScrollView *topScrollView;
 @property (nonatomic, strong) UIScrollView *leftScrollView;
@@ -81,6 +83,12 @@
         _leftWidth = DEFAULT_LEFT_SCROLL_VIEW_WIDTH;
     }
     
+    if ([self.delegate respondsToSelector:@selector(gridViewThicknessOfLine:)]) {
+        _thickness = [self.delegate gridViewThicknessOfLine:self];
+    } else {
+        _thickness = DEFAULT_THICKNESS_LINE;
+    }
+    
     [self initTopScrollView];
     
     [self initLeftScrollView];
@@ -112,6 +120,10 @@
             [_topScrollView addSubview:label];
         }
         
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(_topScrollView.contentSize.width, 0, 0.5, _topHeight)];
+        [line setBackgroundColor:[UIColor darkGrayColor]];
+        [_topScrollView addSubview:line];
+        
         [_topScrollView setContentSize:CGSizeMake(_topScrollView.contentSize.width + width, _topHeight)];
     }
     
@@ -141,6 +153,10 @@
             [label setTextAlignment:NSTextAlignmentCenter];
             [_leftScrollView addSubview:label];
         }
+        
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, _leftScrollView.contentSize.height, _leftWidth, 0.5)];
+        [line setBackgroundColor:[UIColor darkGrayColor]];
+        [_leftScrollView addSubview:line];
         
         [_leftScrollView setContentSize:CGSizeMake(_leftWidth, _leftScrollView.contentSize.height + height)];
     }
@@ -193,6 +209,38 @@
     return CGRectMake(cellx, celly, cellWidth, cellHeight);
 }
 
+- (void)drawLineForMainGridView {
+    NSInteger x = 0, y = 0;
+    for (int i = 0; i < _columnCount; i++) {
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(x, 0, _thickness, _mainGridView.contentSize.height)];
+        [line setBackgroundColor:[UIColor darkGrayColor]];
+        [_mainGridView addSubview:line];
+        
+        NSInteger width;
+        if ([self.delegate respondsToSelector:@selector(gridView:widthForColumnAtIndex:)]) {
+            width = [self.delegate gridView:self widthForColumnAtIndex:i];
+        } else {
+            width = DEFAULT_COLUMN_WIDTH;
+        }
+        
+        x += width;
+    }
+    for (int i = 0; i < _rowCount; i++) {
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, y, _mainGridView.contentSize.width, _thickness)];
+        [line setBackgroundColor:[UIColor darkGrayColor]];
+        [_mainGridView addSubview:line];
+        
+        NSInteger height;
+        if ([self.delegate respondsToSelector:@selector(gridView:heightForRowAtIndex:)]) {
+            height = [self.delegate gridView:self heightForRowAtIndex:i];
+        } else {
+            height = DEFAULT_ROW_HEIGHT;
+        }
+        
+        y += height;
+    }
+}
+
 - (void)didSelectedCell:(id)sender {
     if ([self.delegate respondsToSelector:@selector(gridView:didSelectedCellAtIndex:)]) {
         UIButton *button = (UIButton *)sender;
@@ -206,6 +254,8 @@
     [_mainGridView setBounces:NO];
     
     [_mainGridView setContentSize:CGSizeMake(_topScrollView.contentSize.width, _leftScrollView.contentSize.height)];
+    
+    [self drawLineForMainGridView];
     
     for (int i = 0; i < _cellCount; i++) {
         DGGridViewCell *cell = [self.delegate gridView:self cellForIndex:i];

@@ -33,6 +33,7 @@
 - (UIView *)gridView:(DGGridView *)gridView viewForTopScrollViewAtIndex:(NSInteger)index;
 
 - (void)gridView:(DGGridView *)gridView didSelectedCellAtIndex:(NSInteger)index;
+- (CGFloat)gridViewThicknessOfLine:(DGGridView *)gridView;
 
 @end
 
