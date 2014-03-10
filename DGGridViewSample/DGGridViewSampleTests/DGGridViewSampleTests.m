@@ -1,18 +1,18 @@
 //
-//  DGGridViewTests.m
-//  DGGridViewTests
+//  DGGridViewSampleTests.m
+//  DGGridViewSampleTests
 //
-//  Created by DGMacBook on 2014. 3. 4..
+//  Created by DGMacBook on 2014. 3. 7..
 //  Copyright (c) 2014년 302lab. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
 
-@interface DGGridViewTests : XCTestCase
+@interface DGGridViewSampleTests : XCTestCase
 
 @end
 
-@implementation DGGridViewTests
+@implementation DGGridViewSampleTests
 
 - (void)setUp
 {
