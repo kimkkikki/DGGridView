@@ -176,7 +176,7 @@
         cellx += width;
     }
     
-    for (int i = cell.startColumn; i < cell.endColumn; i++) {
+    for (int i = (int)cell.startColumn; i < cell.endColumn; i++) {
         NSInteger width;
         if ([self.delegate respondsToSelector:@selector(gridView:widthForColumnAtIndex:)]) {
             width = [self.delegate gridView:self widthForColumnAtIndex:i];
@@ -196,7 +196,7 @@
         celly += height;
     }
     
-    for (int i = cell.startRow; i < cell.endRow; i++) {
+    for (int i = (int)cell.startRow; i < cell.endRow; i++) {
         NSInteger height;
         if ([self.delegate respondsToSelector:@selector(gridView:heightForRowAtIndex:)]) {
             height = [self.delegate gridView:self heightForRowAtIndex:i];
